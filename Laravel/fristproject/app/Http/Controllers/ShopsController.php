@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\shop; // Ensure the model is imported
-
+use Illuminate\Support\Facades\Hash; // ✅ الصح
+use App\Models\Shop; // ✅ اسم الموديل لازم يكون بحروف كبيرة لو كده في المشروع
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 class ShopsController extends Controller
 {
     public function index()
@@ -80,7 +83,74 @@ public function update(Request $request, Shop $shop)
         $shop->delete();
         return to_route('shops.index');
     }
+    public function login()
+    {
+        return view('shops.login');
+    }
+     public function dashboard()
+    {
+        // Logic to show the dashboard
+        return view('shops.dashboard');
+    }
+
+
+    public function loginstore(Request $request): RedirectResponse
+    {
+            // Logic to handle login
+        // Validate and authenticate the user
+        // Redirect to dashboard or another page after successful login
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+ 
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+ 
+            return redirect()->intended('dashboard');
+        }
+ 
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
+    }
     
+    
+    public function register(){
+        return view('shops.register');
+    }
+     public function registerstore(Request $request): RedirectResponse
+    { 
+        // Validate the registration data
+        $userdata= $request->validate([
+            'name' => ['required', 'string', 'max:255', 'min:3'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'min:4', 'confirmed'],
+            'password_confirmation' => ['required', 'min:4'],
+        ]);
+        // Create the user
+        $userdata ['password'] = Hash::make($userdata['password']);
+        $user = User::create($userdata);
+        // Log the user in
+        Auth::login($user);
+        return redirect()->route('dashboard');
+
+        
+    }
+    
+    public function logout(){
+        Auth::guard('web')->logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        return redirect()->route('shops.index');
+    }
+    public function showall()
+    {
+        // Logic to show all accounts in the web
+        $users = User::paginate(10);
+
+        return view('shops.showall', ['users' => $users]);
+    }
     
 
 }

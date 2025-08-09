@@ -94,7 +94,22 @@
             margin: 20px 0;
             margin-left: 20px;
            }
-       
+       .lin{
+            display: inline-block;
+            background-color: #e3342f; /* أحمر جميل */
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 20px 0;
+            margin-left: 20px;
+        }
+        .link:hover, .lin:hover {
+            background-color: #2c3e50; /* لون داكن عند التمرير */
+            transform: translateY(-2px); /* تأثير رفع خفيف */
+       }
     </style>
 </head>
 <body>
@@ -104,6 +119,10 @@
     </header>
         <div class="links">
             <a href="{{route('shops.create')}}" class="link"> addprodcut </a>
+            <a href="{{route('shops.login')}}" class="link"> Login</a>
+            <a href="{{route('shops.register')}}" class="link"> Register</a>
+            <a href="{{route('shops.showall')}}"class="lin" >Show all Account In Web </a>
+
 
         </div>
        
